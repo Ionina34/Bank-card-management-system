@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-admin
+      author: darya
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: 'admin@mail.ru'
+              - column:
+                  name: password
+                  value: '$2a$10$HPGdN5qwnf9bm/S5uNBZP.Ai2tM2luE7hagyTT5T4lbE1Kd7jbCIC'
+              - column:
+                  name: role
+                  value: 'ROLE_ADMIN'

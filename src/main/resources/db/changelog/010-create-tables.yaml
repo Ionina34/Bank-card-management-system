@@ -1,0 +1,151 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-users
+      author: darya
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: email
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create-tables-cards
+      author: admin
+      changes:
+        - createTable:
+            tableName: cards
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: encrypted_card_number
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_holder
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expiry_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: decimal(15,2)
+                  defaultValue: 0.00
+              - column:
+                  name: daily_limit
+                  type: decimal(15,2)
+              - column:
+                  name: monthly_limit
+                  type: decimal(15,2)
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_cards_users
+                    references: users(id)
+
+  - changeSet:
+      id: create-table-transactions
+      author: darya
+      changes:
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: card_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_transactions_cards
+                    references: cards(id)
+              - column:
+                  name: amount
+                  type: decimal(15,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: transaction_type
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name:  transaction_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(256)
+
+  - changeSet:
+      id: create-indexes
+      author: darya
+      changes:
+        - createIndex:
+            tableName: cards
+            columns:
+              - column:
+                  name: user_id
+            indexName: idx_cards_user_id
+        - createIndex:
+            tableName: transactions
+            columns:
+              - column:
+                  name: card_id
+            indexName: idx_transactions_card_id
+
+  - changeSet:
+      id: add-column-tables-cards
+      author: darya
+      changes:
+        - addColumn:
+            tableName: cards
+            columns:
+              - column:
+                  name: single_transaction_limit
+                  type: decimal(15,2)
+              - column:
+                  name: daily_transaction_count_limit
+                  type: int
