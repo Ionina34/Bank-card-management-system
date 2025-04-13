@@ -1,7 +1,9 @@
 package banks.card.web.controller;
 
-import banks.card.dto.out.ErrorMessageResponse;
+import banks.card.dto.out.error.ErrorMessageResponse;
+import banks.card.dto.out.error.ErrorTransferOrWithdrawalResponse;
 import banks.card.exception.EntityNotFoundException;
+import banks.card.exception.TransferException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -40,5 +42,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorMessageResponse> handleIllegalState(IllegalStateException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessageResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(TransferException.class)
+    public ResponseEntity<ErrorTransferOrWithdrawalResponse> handleIllegalState(TransferException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorTransferOrWithdrawalResponse(ex.getMessage(), ex.getResponse()));
     }
 }

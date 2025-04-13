@@ -1,4 +1,4 @@
-package banks.card.dto.out;
+package banks.card.dto.out.error;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

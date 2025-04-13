@@ -1,5 +1,6 @@
 package banks.card.dto.out.card;
 
+import banks.card.dto.out.transaction.TransactionResponse;
 import banks.card.entity.CardStatus;
 import banks.card.entity.Transaction;
 import lombok.AllArgsConstructor;
@@ -20,10 +21,11 @@ public class CardResponse {
     private String cardHolder;
     private LocalDate expiryDate;
     private CardStatus status;
+    private BigDecimal balance;
     private BigDecimal dailyLimit;
     private BigDecimal monthlyLimit;
     private BigDecimal singleTransactionLimit;
     private Integer dailyTransactionCountLimit;
     private Long userId;
-    private List<Transaction> transactions;
+    private List<TransactionResponse> transactions;
 }

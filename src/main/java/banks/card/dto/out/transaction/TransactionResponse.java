@@ -14,6 +14,8 @@ import java.sql.Timestamp;
 public class TransactionResponse {
 
     private Long id;
+    private Long fromCardId;
+    private Long toCardId;
     private BigDecimal amount;
     private TransactionType transactionType;
     private Timestamp transactionDate;

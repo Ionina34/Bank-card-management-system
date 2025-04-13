@@ -1,11 +1,15 @@
 package banks.card.web.controller.user;
 
+import banks.card.dto.in.card.TransferRequest;
 import banks.card.dto.out.card.CardResponse;
 import banks.card.dto.out.card.ListCardResponse;
+import banks.card.dto.out.card.TransferResponse;
 import banks.card.dto.out.transaction.ListTransactionResponse;
 import banks.card.exception.EntityNotFoundException;
+import banks.card.exception.TransferException;
 import banks.card.service.services.user.CardUserActionService;
 import banks.card.service.services.TransactionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -55,7 +59,17 @@ public class CardController {
             @RequestParam(defaultValue = "0", name = "page") int page,
             @RequestParam(defaultValue = "10", name = "size") int size)
             throws EntityNotFoundException, AccessDeniedException {
-        ListTransactionResponse response = transactionUserService.getUserTransactions(id, token, PageRequest.of(page,size));
+        ListTransactionResponse response = transactionUserService.getUserTransactions(id, token, PageRequest.of(page, size));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<TransferResponse> transfer(
+            @RequestHeader(HEADER_NAME) String token,
+            @RequestBody @Valid TransferRequest request)
+            throws TransferException, EntityNotFoundException, AccessDeniedException {
+        TransferResponse response = cardService.transfer(token, request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }

@@ -149,3 +149,22 @@ databaseChangeLog:
               - column:
                   name: daily_transaction_count_limit
                   type: int
+
+  - changeSet:
+      id: add-column-tables-transactions
+      author: darya
+      changes:
+        - addColumn:
+            tableName: transactions
+            columns:
+              - column:
+                  name: counterpart_card_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_transactions_counterpart_cards
+                    references: cards(id)
+              - column:
+                  name: transfer_status
+                  type: varchar(64)
+                  constraints:
+                    nullable: false

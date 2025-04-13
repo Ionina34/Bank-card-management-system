@@ -36,6 +36,7 @@ public class Card {
     private CardStatus status;
 
     @Column(name = "balance", precision = 15, scale = 2)
+    @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
 
     @Column(name = "daily_limit", precision = 15, scale = 2)

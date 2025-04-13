@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bank
+    username: main_user
+    password: main_password
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+    drop-first: false
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+token:
+  signing:
+    key: "${SECRET_TOKEN}"
+
+hash:
+  card:
+    key: "${HASH_KEY}"

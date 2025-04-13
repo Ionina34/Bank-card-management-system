@@ -1,7 +1,7 @@
 package banks.card.web.controller;
 
 import banks.card.dto.in.SignInUpRequest;
-import banks.card.dto.out.ErrorMessageResponse;
+import banks.card.dto.out.error.ErrorMessageResponse;
 import banks.card.dto.out.JwtAuthenticationResponse;
 import banks.card.exception.EntityExistsException;
 import banks.card.exception.EntityNotFoundException;
