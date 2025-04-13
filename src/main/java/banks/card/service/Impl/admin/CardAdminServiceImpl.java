@@ -3,6 +3,7 @@ package banks.card.service.Impl.admin;
 import banks.card.dto.in.card.CardInsertRequest;
 import banks.card.dto.in.card.CardUpdateStatusRequest;
 import banks.card.dto.in.card.UpdateCardLimitRequest;
+import banks.card.dto.in.filter.CardFilterRequest;
 import banks.card.dto.out.card.CardResponse;
 import banks.card.dto.out.card.CardUpsertResponse;
 import banks.card.dto.out.card.ListCardResponse;
@@ -14,10 +15,12 @@ import banks.card.repository.CardRepository;
 import banks.card.service.services.amin.CardAdminActionService;
 import banks.card.service.services.user.UserUserActionService;
 import banks.card.service.mapper.CardMapper;
+import banks.card.service.specification.CardSpecification;
 import banks.card.utils.BeanUtils;
 import banks.card.utils.CardMascEncryptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,9 +71,11 @@ public class CardAdminServiceImpl implements CardAdminActionService {
     }
 
     @Override
-    public ListCardResponse getAllCards(Pageable pageable) {
+    public ListCardResponse getAllCards(CardFilterRequest filter, Pageable pageable) {
+        Specification<Card> spec = CardSpecification.filterCards(filter);
+
         return cardMapper.listEntityToListResponse(
-                cardRepository.findAll(pageable)
+                cardRepository.findAll(spec, pageable)
         );
     }
 

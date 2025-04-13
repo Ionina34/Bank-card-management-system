@@ -1,9 +1,12 @@
 package banks.card.web.controller;
 
+import banks.card.dto.out.card.TransferResponse;
+import banks.card.dto.out.card.WithdrawalResponse;
 import banks.card.dto.out.error.ErrorMessageResponse;
 import banks.card.dto.out.error.ErrorTransferOrWithdrawalResponse;
 import banks.card.exception.EntityNotFoundException;
 import banks.card.exception.TransferException;
+import banks.card.exception.WithdrawalException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,15 +41,15 @@ public class GlobalExceptionHandler {
                 .body(new ErrorMessageResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ErrorMessageResponse> handleIllegalState(IllegalStateException ex) {
+    @ExceptionHandler(TransferException.class)
+    public ResponseEntity<ErrorTransferOrWithdrawalResponse<TransferResponse>> handleTransferState(TransferException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorMessageResponse(ex.getMessage()));
+                .body(new ErrorTransferOrWithdrawalResponse<>(ex.getMessage(), ex.getResponse()));
     }
 
-    @ExceptionHandler(TransferException.class)
-    public ResponseEntity<ErrorTransferOrWithdrawalResponse> handleIllegalState(TransferException ex) {
+    @ExceptionHandler(WithdrawalException.class)
+    public ResponseEntity<ErrorTransferOrWithdrawalResponse<WithdrawalResponse>> handleWithdrawalState(WithdrawalException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorTransferOrWithdrawalResponse(ex.getMessage(), ex.getResponse()));
+                .body(new ErrorTransferOrWithdrawalResponse<>(ex.getMessage(), ex.getResponse()));
     }
 }

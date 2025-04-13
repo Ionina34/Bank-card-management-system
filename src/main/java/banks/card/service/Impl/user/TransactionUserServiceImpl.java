@@ -1,5 +1,6 @@
 package banks.card.service.Impl.user;
 
+import banks.card.dto.in.filter.TransactionFilterRequest;
 import banks.card.dto.out.transaction.ListTransactionResponse;
 import banks.card.entity.Card;
 import banks.card.entity.Transaction;
@@ -11,9 +12,11 @@ import banks.card.service.aspect.CheckingRightsCard;
 import banks.card.service.mapper.TransactionMapper;
 import banks.card.service.services.user.CardUserActionService;
 import banks.card.service.services.TransactionService;
+import banks.card.service.specification.TransactionSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -44,18 +47,18 @@ public class TransactionUserServiceImpl implements TransactionService {
 
     @Override
     @CheckingRightsCard(cardIdIndex = 0, tokenIdIndex = 1)
-    public ListTransactionResponse getUserTransactions(Long cardId, String token, Pageable pageable)
+    public ListTransactionResponse getUserTransactions(Long cardId, String token, TransactionFilterRequest filter, Pageable pageable)
             throws EntityNotFoundException {
-        Card card = cardService.findById(cardId);
-        Page<Transaction> transactions = transactionRepository.findByCard(card, pageable);
-        return transactionMapper.listEntityToResponseEntity(transactions);
+       return getCardTransactions(cardId,filter, pageable);
     }
 
     @Override
-    public ListTransactionResponse getCardTransactions(Long cardId, Pageable pageable)
+    public ListTransactionResponse getCardTransactions(Long cardId, TransactionFilterRequest filter, Pageable pageable)
             throws EntityNotFoundException {
         Card card = cardService.findById(cardId);
-        Page<Transaction> transactions = transactionRepository.findByCard(card, pageable);
+        Specification<Transaction> spec = TransactionSpecification.filterTransaction(filter);
+
+        Page<Transaction> transactions = transactionRepository.findByCard(card, spec, pageable);
         return transactionMapper.listEntityToResponseEntity(transactions);
     }
 

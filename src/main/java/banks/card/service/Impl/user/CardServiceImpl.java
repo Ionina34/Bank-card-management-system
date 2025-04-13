@@ -2,6 +2,7 @@ package banks.card.service.Impl.user;
 
 import banks.card.dto.in.card.TransferRequest;
 import banks.card.dto.in.card.WithdrawalRequest;
+import banks.card.dto.in.filter.CardFilterRequest;
 import banks.card.dto.out.card.CardResponse;
 import banks.card.dto.out.card.ListCardResponse;
 import banks.card.dto.out.card.TransferResponse;
@@ -18,9 +19,12 @@ import banks.card.service.services.user.CardUserActionService;
 import banks.card.service.services.user.UserUserActionService;
 import banks.card.service.mapper.CardMapper;
 import banks.card.service.security.JwtService;
+import banks.card.service.specification.CardSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,12 +58,16 @@ public class CardServiceImpl implements CardUserActionService {
     }
 
     @Override
-    public ListCardResponse getCards(String token) throws EntityNotFoundException {
+    public ListCardResponse getCards(String token, CardFilterRequest filter, Pageable pageable)
+            throws EntityNotFoundException {
         token = token.substring(BEARER_PREFIX.length());
         String email = jwtService.extractEmail(token);
+
         User user = userService.findByEmail(email);
+        Specification<Card> spec = CardSpecification.filterCards(filter);
+
         return cardMapper.listEntityToListResponse(
-                cardRepository.findByUser(user)
+                cardRepository.findByUser(user, spec, pageable)
         );
     }
 
@@ -182,7 +190,7 @@ public class CardServiceImpl implements CardUserActionService {
             response.setStatus(TransferStatus.DECLINED);
         } catch (EntityNotFoundException e) {
             throw e;
-        } catch (Exception e){
+        } catch (Exception e) {
             response.setStatus(TransferStatus.FAILED);
             String message = "Internal server error " + e.getMessage();
             Transaction tx =

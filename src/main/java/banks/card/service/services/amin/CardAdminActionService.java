@@ -3,6 +3,7 @@ package banks.card.service.services.amin;
 import banks.card.dto.in.card.CardInsertRequest;
 import banks.card.dto.in.card.CardUpdateStatusRequest;
 import banks.card.dto.in.card.UpdateCardLimitRequest;
+import banks.card.dto.in.filter.CardFilterRequest;
 import banks.card.dto.out.card.CardResponse;
 import banks.card.dto.out.card.CardUpsertResponse;
 import banks.card.dto.out.card.ListCardResponse;
@@ -21,7 +22,7 @@ public interface CardAdminActionService extends CardService {
 
     void delete(Long id);
 
-    ListCardResponse getAllCards(Pageable pageable);
+    ListCardResponse getAllCards(CardFilterRequest filter, Pageable pageable);
 
     @Transactional
     CardResponse updateLimit(Long cardId, UpdateCardLimitRequest request) throws EntityNotFoundException;
