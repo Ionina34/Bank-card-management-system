@@ -16,6 +16,9 @@ services:
       - app-network
 
   app:
+    environment:
+      SECRET_TOKEN: SECRET_TOKEN
+      HASH_KEY: HASH_KEY
     build:
       context: .
       dockerfile: Dockerfile
