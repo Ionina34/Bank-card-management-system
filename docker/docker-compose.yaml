@@ -1,9 +1,0 @@
-services:
-  db:
-    image: postgres:12.3
-    environment:
-      POSTGRES_DB: bank
-      POSTGRES_USER: main_user
-      POSTGRES_PASSWORD: main_password
-    ports:
-      - "5432:5432"

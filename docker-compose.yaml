@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:12.3
+    environment:
+      POSTGRES_DB: bank
+      POSTGRES_USER: main_user
+      POSTGRES_PASSWORD: main_password
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U main_user -d bank" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
