@@ -2,9 +2,11 @@ databaseChangeLog:
   - changeSet:
       id: create-table-users
       author: darya
+      comment: Создает таблицу users для хранения информации о пользователях.
       changes:
         - createTable:
             tableName: users
+            remarks: Таблица для хранения данных пользователей, включая email, пароль и роль.
             columns:
               - column:
                   name: id
@@ -12,29 +14,35 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     primaryKey: true
+                  remarks: Уникальный идентификатор пользователя.
               - column:
                   name: email
                   type: varchar(128)
                   constraints:
                     nullable: false
                     unique: true
+                  remarks: Email пользователя, уникальный и обязательный.
               - column:
                   name: password
                   type: varchar(128)
                   constraints:
                     nullable: false
+                  remarks: Хэшированный пароль пользователя.
               - column:
                   name: role
                   type: varchar(32)
                   constraints:
                     nullable: false
+                  remarks: Роль пользователя (например, USER или ADMIN).
 
   - changeSet:
       id: create-tables-cards
       author: admin
+      comment: Создает таблицу cards для хранения информации о банковских картах.
       changes:
         - createTable:
             tableName: cards
+            remarks: Таблица для хранения данных о картах, связанных с пользователями.
             columns:
               - column:
                   name: id
@@ -42,36 +50,44 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     primaryKey: true
+                  remarks: Уникальный идентификатор карты.
               - column:
                   name: encrypted_card_number
                   type: varchar(256)
                   constraints:
                     nullable: false
+                  remarks: Зашифрованный номер карты.
               - column:
                   name: card_holder
                   type: varchar(256)
                   constraints:
                     nullable: false
+                  remarks: Имя владельца карты.
               - column:
                   name: expiry_date
                   type: date
                   constraints:
                     nullable: false
+                  remarks: Дата истечения срока действия карты.
               - column:
                   name: status
                   type: varchar(50)
                   constraints:
                     nullable: false
+                  remarks: Статус карты (например, ACTIVE, BLOCKED).
               - column:
                   name: balance
                   type: decimal(15,2)
                   defaultValue: 0.00
+                  remarks: Текущий баланс карты.
               - column:
                   name: daily_limit
                   type: decimal(15,2)
+                  remarks: Дневной лимит расходов по карте.
               - column:
                   name: monthly_limit
                   type: decimal(15,2)
+                  remarks: Месячный лимит расходов по карте.
               - column:
                   name: user_id
                   type: bigint
@@ -79,13 +95,16 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_cards_users
                     references: users(id)
+                  remarks: Идентификатор пользователя, которому принадлежит карта.
 
   - changeSet:
       id: create-table-transactions
       author: darya
+      comment: Создает таблицу transactions для хранения данных о транзакциях.
       changes:
         - createTable:
             tableName: transactions
+            remarks: Таблица для хранения информации о транзакциях по картам.
             columns:
               - column:
                   name: id
@@ -93,6 +112,7 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     primaryKey: true
+                  remarks: Уникальный идентификатор транзакции.
               - column:
                   name: card_id
                   type: bigint
@@ -100,28 +120,34 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_transactions_cards
                     references: cards(id)
+                  remarks: Идентификатор карты, с которой выполнена транзакция.
               - column:
                   name: amount
                   type: decimal(15,2)
                   constraints:
                     nullable: false
+                  remarks: Сумма транзакции.
               - column:
                   name: transaction_type
                   type: varchar(64)
                   constraints:
                     nullable: false
+                  remarks: Тип транзакции (например, WITHDRAWAL, TRANSFER).
               - column:
-                  name:  transaction_date
+                  name: transaction_date
                   type: timestamp
                   constraints:
                     nullable: false
+                  remarks: Дата и время выполнения транзакции.
               - column:
                   name: description
                   type: varchar(256)
+                  remarks: Описание транзакции (опционально).
 
   - changeSet:
       id: create-indexes
       author: darya
+      comment: Создает индексы для оптимизации запросов к таблицам cards и transactions.
       changes:
         - createIndex:
             tableName: cards
@@ -129,16 +155,19 @@ databaseChangeLog:
               - column:
                   name: user_id
             indexName: idx_cards_user_id
+            remarks: Индекс для ускорения поиска карт по идентификатору пользователя.
         - createIndex:
             tableName: transactions
             columns:
               - column:
                   name: card_id
             indexName: idx_transactions_card_id
+            remarks: Индекс для ускорения поиска транзакций по идентификатору карты.
 
   - changeSet:
       id: add-column-tables-cards
       author: darya
+      comment: Добавляет новые столбцы в таблицу cards для поддержки дополнительных лимитов.
       changes:
         - addColumn:
             tableName: cards
@@ -146,13 +175,16 @@ databaseChangeLog:
               - column:
                   name: single_transaction_limit
                   type: decimal(15,2)
+                  remarks: Лимит на сумму одной транзакции.
               - column:
                   name: daily_transaction_count_limit
                   type: int
+                  remarks: Лимит на количество транзакций в день.
 
   - changeSet:
       id: add-column-tables-transactions
       author: darya
+      comment: Добавляет столбцы в таблицу transactions для поддержки переводов между картами.
       changes:
         - addColumn:
             tableName: transactions
@@ -163,8 +195,10 @@ databaseChangeLog:
                   constraints:
                     foreignKeyName: fk_transactions_counterpart_cards
                     references: cards(id)
+                  remarks: Идентификатор карты-получателя для переводов.
               - column:
                   name: transfer_status
                   type: varchar(64)
                   constraints:
                     nullable: false
+                  remarks: Статус перевода (например, SUCCESS, FAILED).

@@ -12,12 +12,14 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(defaultValue = "Запроя на снятие средств с карты")
+@Schema(defaultValue = "Запрос на снятие средств с карты")
 public class WithdrawalRequest {
 
-    @NotNull
+    @Schema(description = "Идентификатор карты", example = "123")
+    @NotNull(message = "Идентификатор не моежет быть null")
     private Long cardId;
 
+    @Schema(description = "Сумма для снятия средств",example = "150")
     @Positive
     private BigDecimal amount;
 }

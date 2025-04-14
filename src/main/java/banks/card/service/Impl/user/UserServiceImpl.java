@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+/**
+ * Реализация {@link UserUserActionService} сервиса для действий пользователя с учетной записью.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserUserActionService {

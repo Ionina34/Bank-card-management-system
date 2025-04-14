@@ -5,9 +5,22 @@ import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.Field;
 
+/**
+ * Утилитный класс для работы с объектами Java Bean.
+ * Предоставляет методы для копирования свойств между объектами.
+ */
 @UtilityClass
 public class BeanUtils {
 
+    /**
+     * Копирует ненулевые свойства из исходного объекта в целевой объект.
+     * Использует рефлексию для доступа к полям объекта.
+     * Поля с null-значениями в исходном объекте игнорируются.
+     *
+     * @param source      исходный объект, из которого копируются свойства
+     * @param destination целевой объект, в который копируются свойства
+     * @throws IllegalAccessException если доступ к полю невозможен
+     */
     @SneakyThrows
     public void copyNotNullProperties(Object source, Object destination) {
         Class<?> clazz = source.getClass();

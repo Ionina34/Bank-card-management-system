@@ -14,6 +14,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Сервис для регистрации и аутентификации пользователей.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -24,10 +27,11 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     /**
-     * Регистрация пользователя
+     * Регистрирует нового пользователя и возвращает JWT-токен.
      *
-     * @param request данные пользователя
-     * @return токен
+     * @param request данные для регистрации пользователя
+     * @return объект {@link JwtAuthenticationResponse} с JWT-токеном
+     * @throws EntityExistsException если пользователь с указанным email уже существует
      */
     public JwtAuthenticationResponse signUp(SignInUpRequest request) throws EntityExistsException {
         User user = User.builder()
@@ -43,10 +47,11 @@ public class AuthenticationService {
     }
 
     /**
-     * Аутентификация пользователя
+     * Аутентифицирует пользователя и возвращает JWT-токен.
      *
-     * @param request данные пользователя
-     * @return токен
+     * @param request данные для аутентификации пользователя
+     * @return объект {@link JwtAuthenticationResponse} с JWT-токеном
+     * @throws EntityNotFoundException если пользователь с указанным email не найден
      */
     public JwtAuthenticationResponse signIn(SignInUpRequest request) throws EntityNotFoundException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(

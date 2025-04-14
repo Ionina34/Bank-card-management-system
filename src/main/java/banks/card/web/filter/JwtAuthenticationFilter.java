@@ -21,6 +21,11 @@ import java.io.IOException;
 import static banks.card.service.security.JwtService.BEARER_PREFIX;
 import static banks.card.service.security.JwtService.HEADER_NAME;
 
+/**
+ * Фильтр для аутентификации запросов с использованием JWT-токена.
+ * Проверяет наличие и валидность JWT-токена в заголовке запроса,
+ * извлекает данные пользователя и устанавливает аутентификацию в контексте безопасности Spring Security.
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -28,6 +33,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserUserActionService userService;
 
+    /**
+     * Обрабатывает входящий HTTP-запрос, проверяя JWT-токен и выполняя аутентификацию.
+     * Если токен присутствует, валиден и пользователь не аутентифицирован,
+     * создается аутентификационный объект и устанавливается в контекст безопасности.
+     * Затем запрос передается следующему фильтру в цепочке.
+     *
+     * @param request     HTTP-запрос, содержащий заголовок с JWT-токеном
+     * @param response    HTTP-ответ
+     * @param filterChain цепочка фильтров для дальнейшей обработки запроса
+     * @throws ServletException если возникает ошибка обработки запроса
+     * @throws IOException      если возникает ошибка ввода-вывода
+     */
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,

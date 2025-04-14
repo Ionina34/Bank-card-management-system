@@ -8,8 +8,17 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Класс для создания спецификаций фильтрации карт {@link Card} на основе запроса {@link CardFilterRequest}.
+ */
 public class CardSpecification {
 
+    /**
+     * Создает спецификацию для фильтрации карт по заданным критериям.
+     *
+     * @param filter запрос с параметрами фильтрации
+     * @return спецификация {@link Specification} для сущности {@link Card}
+     */
     public static Specification<Card> filterCards(CardFilterRequest filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

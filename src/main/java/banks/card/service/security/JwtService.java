@@ -16,6 +16,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Сервис для работы с JWT-токенами: генерация, извлечение данных и проверка валидности.
+ */
 @Service
 public class JwtService {
 
@@ -31,20 +34,20 @@ public class JwtService {
     private static final int TOKEN_EXPIRATION_DAYS = 5;
 
     /**
-     * Извлечение имени пользователя из токена.
+     * Извлекает email пользователя из JWT-токена.
      *
-     * @param token Токен доступа
-     * @return Email пользователя
+     * @param token JWT-токен
+     * @return email пользователя
      */
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
     /**
-     * Генерация токена
+     * Генерирует JWT-токен для пользователя.
      *
-     * @param userDetails Данные пользователя
-     * @return Токен доступа
+     * @param userDetails данные пользователя
+     * @return сгенерированный JWT-токен
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -57,11 +60,11 @@ public class JwtService {
     }
 
     /**
-     * Проверка токена на валидность
+     * Проверяет валидность JWT-токена.
      *
-     * @param token       Токен доступа
-     * @param userDetails Данные  пользователя
-     * @return true, если токен валиден
+     * @param token       JWT-токен
+     * @param userDetails данные пользователя
+     * @return {@code true}, если токен валиден, иначе {@code false}
      */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String email = extractEmail(token);
@@ -69,12 +72,12 @@ public class JwtService {
     }
 
     /**
-     * Извлечение данных из токена
+     * Извлекает данные из JWT-токена с помощью указанной функции.
      *
-     * @param token           Токен доступа
-     * @param claimsResolvers Функция извлечения данных
-     * @param <T>             Тип данных
-     * @return Данные
+     * @param token           JWT-токен
+     * @param claimsResolvers функция для извлечения данных
+     * @param <T>             тип возвращаемых данных
+     * @return извлеченные данные
      */
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolvers) {
         final Claims claims = extractAllClaims(token);
@@ -82,11 +85,11 @@ public class JwtService {
     }
 
     /**
-     * Генерация токена доступа
+     * Генерирует JWT-токен с дополнительными данными.
      *
-     * @param extractClaims Допольнительные данные
-     * @param userDetails   Данные пользователя
-     * @return Токен доступа
+     * @param extractClaims дополнительные данные для токена
+     * @param userDetails   данные пользователя
+     * @return сгенерированный JWT-токен
      */
     private String generateToken(Map<String, Object> extractClaims, UserDetails userDetails) {
         long expirationTimeMillis = System.currentTimeMillis() + MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE * HOURS_IN_DAY * TOKEN_EXPIRATION_DAYS;
@@ -102,30 +105,30 @@ public class JwtService {
     }
 
     /**
-     * Проверка токена на просроченность
+     * Проверяет, истек ли срок действия JWT-токена.
      *
-     * @param token Токен доступа
-     * @return true, если токен просрочен
+     * @param token JWT-токен
+     * @return {@code true}, если токен истек, иначе {@code false}
      */
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
     /**
-     * Извлечение даты истечения токена
+     * Извлекает дату истечения срока действия JWT-токена.
      *
-     * @param token Токен доступа
-     * @return Дата истечения
+     * @param token JWT-токен
+     * @return дата истечения срока действия
      */
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
     /**
-     * Тзвлечение всех данных из токена доступа
+     * Извлекает все данные (claims) из JWT-токена.
      *
-     * @param token Токен доступа
-     * @return Данные
+     * @param token JWT-токен
+     * @return объект {@link Claims} с данными токена
      */
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
@@ -136,9 +139,9 @@ public class JwtService {
     }
 
     /**
-     * Получение ключа для подписи токена доступа
+     * Возвращает ключ для подписи JWT-токена.
      *
-     * @return Ключ
+     * @return ключ подписи
      */
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);

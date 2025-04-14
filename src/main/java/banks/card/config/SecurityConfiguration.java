@@ -22,17 +22,39 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
 
+/**
+ * Конфигурационный класс для настройки безопасности приложения.
+ * Настраивает Spring Security для использования JWT-аутентификации, CORS,
+ * шифрования паролей и управления доступом к ресурсам.
+ * Включает поддержку аннотаций безопасности на уровне методов.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
+    /**
+     * Фильтр для обработки JWT-токенов в запросах.
+     */
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    /**
+     * Сервис для загрузки данных пользователей для аутентификации.
+     */
     private final UserUserActionService userService;
 
+    /**
+     * Настраивает цепочку фильтров безопасности для HTTP-запросов.
+     * Отключает CSRF, настраивает CORS, определяет правила авторизации запросов,
+     * устанавливает stateless-сессии и добавляет JWT-фильтр перед стандартным фильтром аутентификации.
+     *
+     * @param http объект {@link HttpSecurity} для конфигурации безопасности
+     * @return объект {@link SecurityFilterChain}, представляющий настроенную цепочку фильтров
+     * @throws Exception если возникает ошибка при настройке безопасности
+     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -53,11 +75,22 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    /**
+     * Создает бин для шифрования паролей с использованием алгоритма BCrypt.
+     *
+     * @return объект {@link PasswordEncoder} для шифрования и проверки паролей
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Создает бин поставщика аутентификации, использующий данные пользователей и шифрование паролей.
+     * Настраивает {@link DaoAuthenticationProvider} с сервисом пользователей и кодировщиком паролей.
+     *
+     * @return объект {@link AuthenticationProvider} для обработки аутентификации
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -66,10 +99,16 @@ public class SecurityConfiguration {
         return authProvider;
     }
 
+    /**
+     * Создает бин менеджера аутентификации на основе конфигурации Spring Security.
+     *
+     * @param config объект {@link AuthenticationConfiguration}, содержащий настройки аутентификации
+     * @return объект {@link AuthenticationManager} для управления процессом аутентификации
+     * @throws Exception если возникает ошибка при получении менеджера аутентификации
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
             throws Exception {
         return config.getAuthenticationManager();
     }
-
 }

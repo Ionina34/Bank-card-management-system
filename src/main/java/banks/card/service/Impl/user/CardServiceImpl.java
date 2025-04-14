@@ -37,6 +37,9 @@ import java.util.List;
 
 import static banks.card.service.security.JwtService.BEARER_PREFIX;
 
+/**
+ * Реализация {@link CardUserActionService} сервиса для действий пользователя с картами.
+ */
 @Service
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardUserActionService {
@@ -201,6 +204,12 @@ public class CardServiceImpl implements CardUserActionService {
         return response;
     }
 
+    /**
+     * Рассчитывает сумму расходов по карте за текущий день.
+     *
+     * @param card объект {@link Card}
+     * @return сумма расходов за день
+     */
     private BigDecimal calculateDailySpent(Card card) {
         Timestamp startOfDay = Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
         return transactionService
@@ -211,6 +220,12 @@ public class CardServiceImpl implements CardUserActionService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    /**
+     * Рассчитывает сумму расходов по карте за текущий месяц.
+     *
+     * @param card объект {@link Card}
+     * @return сумма расходов за месяц
+     */
     private BigDecimal calculateMonthlySpent(Card card) {
         Timestamp startOfDay = Timestamp.valueOf(LocalDateTime.now().withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS));
         return transactionService
@@ -221,12 +236,25 @@ public class CardServiceImpl implements CardUserActionService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    /**
+     * Подсчитывает количество транзакций по карте за текущий день.
+     *
+     * @param card объект {@link Card}
+     * @return количество транзакций за день
+     */
     private long countDailyTransactions(Card card) {
         Timestamp startOfDay = Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
         return transactionService
                 .countByCardAndTransactionDateAfterAndTransactionTypeIn(card, startOfDay, List.of(TransactionType.WITHDRAWAL, TransactionType.TRANSFER_OUT));
     }
 
+    /**
+     * Проверяет лимиты карты перед выполнением операции.
+     *
+     * @param fromCard объект {@link Card}, с которой выполняется операция
+     * @param amount   сумма операции
+     * @throws IllegalStateException если превышен один из лимитов
+     */
     private void checkingLimitsOfCard(Card fromCard, BigDecimal amount)
             throws TransferException {
 

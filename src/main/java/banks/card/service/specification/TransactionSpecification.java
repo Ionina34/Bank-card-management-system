@@ -8,8 +8,17 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Класс для создания спецификаций фильтрации транзакций {@link Transaction} на основе запроса {@link TransactionFilterRequest}.
+ */
 public class TransactionSpecification {
 
+    /**
+     * Создает спецификацию для фильтрации транзакций по заданным критериям.
+     *
+     * @param filter запрос с параметрами фильтрации
+     * @return спецификация {@link Specification} для сущности {@link Transaction}
+     */
     public static Specification<Transaction> filterTransaction(TransactionFilterRequest filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

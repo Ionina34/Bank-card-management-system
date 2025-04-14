@@ -19,6 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Реализация {@link UserAdminActionService} сервиса для административных действий с пользователями.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserAdminServiceImpl implements UserAdminActionService {

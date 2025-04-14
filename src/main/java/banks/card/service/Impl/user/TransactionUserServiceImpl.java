@@ -23,6 +23,9 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
+/**
+ * Реализация {@link TransactionService} сервиса для работы с транзакциями пользователей.
+ */
 @Service
 @RequiredArgsConstructor
 public class TransactionUserServiceImpl implements TransactionService {
