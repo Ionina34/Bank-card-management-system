@@ -12,16 +12,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Запрос на обновлвение информации о пользователе")
+@Schema(description = "Запрос на обновление информации о пользователе")
 public class UserUpdateRequest {
 
     @Schema(description = "Email пользователя", example = "Jon@mail.ru")
     @Size(min = 5, max = 50, message = "Email должно содержать от 5 до 50 символов")
-    @NotBlank(message = "Email пользователя не может быть пустным")
     @Email(message = "Email адрес должен быть в формате user@mail.ru")
     private String email;
 
     @Schema(description = "Статус карты", example = "ACTIVE")
-    @NotBlank(message = "Статус не может быть пустым")
     private Role role;
 }

@@ -134,7 +134,8 @@ public class CardAdminController {
             throws EntityNotFoundException {
         TransactionFilterRequest filter =
                 new TransactionFilterRequest(type, status, minAmount, maxAmount,
-                        Timestamp.valueOf(dateFrom), Timestamp.valueOf(dateTo));
+                        dateFrom == null ? null : Timestamp.valueOf(dateFrom),
+                        dateTo == null ? null : Timestamp.valueOf(dateTo));
 
         ListTransactionResponse response = transactionService.getCardTransactions(id, filter, PageRequest.of(page, size));
         return ResponseEntity.status(HttpStatus.OK)
@@ -232,7 +233,7 @@ public class CardAdminController {
             @ApiResponse(responseCode = "403", description = "Доступ запрещен: требуется роль ADMIN", content = @Content)
     })
     @PatchMapping("/{id}/limits")
-    @PreAuthorize("hasHole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CardResponse> updateLimits(
             @Parameter(description = "Идентификатор карты", required = true) @PathVariable("id") Long id,
             @Parameter(description = "Объект с новыми лимитами карты") @RequestBody @Valid UpdateCardLimitRequest request)

@@ -4,6 +4,7 @@ import banks.card.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,6 @@ public class UserCreateRequest {
     private String password;
 
     @Schema(description = "Статус карты", example = "BLOCKED")
-    @NotBlank(message = "Статус не может быть пустым")
+    @NotNull(message = "Статус не может быть пустым")
     private Role role;
 }

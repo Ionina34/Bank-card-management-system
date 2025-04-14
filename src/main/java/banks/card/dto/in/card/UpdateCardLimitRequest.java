@@ -8,11 +8,10 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-//todo описание в скрипт liquibase
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Запрос на установку лимитор для карты")
+@Schema(description = "Запрос на установку лимитов для карты")
 public class UpdateCardLimitRequest {
 
     @Schema(description = "Дневной лимит", example = "150.0")

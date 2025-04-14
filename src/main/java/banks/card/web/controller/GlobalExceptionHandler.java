@@ -31,13 +31,16 @@ public class GlobalExceptionHandler {
      * @return объект {@link ResponseEntity} с HTTP-статусом 400 (Bad Request) и строкой, содержащей описание ошибок валидации
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorMessageResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         String errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
-        return ResponseEntity.badRequest().body(errors);
+        ErrorMessageResponse response = new ErrorMessageResponse(errors);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(response);
     }
 
     /**
@@ -61,6 +64,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorMessageResponse> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorMessageResponse(ex.getMessage()));
+    }
+
+    /**
+     * Обрабатывает исключение {@link IllegalStateException}, возникшее при обработке запроса.
+     * Возвращает {@link ResponseEntity} с HTTP-статусом 409 (Conflict) и телом
+     * {@link ErrorMessageResponse}, содержащим сообщение об ошибке.
+     *
+     * @param ex исключение {@link IllegalStateException}, которое было выброшено
+     * @return {@link ResponseEntity} с кодом состояния {@link HttpStatus#CONFLICT} и
+     *         телом {@link ErrorMessageResponse}, содержащим сообщение об ошибке
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorMessageResponse> handleIllegalState(IllegalStateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorMessageResponse(ex.getMessage()));
     }
 
