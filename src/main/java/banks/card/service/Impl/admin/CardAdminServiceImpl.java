@@ -48,15 +48,14 @@ public class CardAdminServiceImpl implements CardAdminActionService {
             throws EntityNotFoundException, Exception {
         User user = userService.findByEmail(email);
 
-        Card newCard = Card.builder()
+        Card card = Card.builder()
                 .encryptedCardNumber(CardMascEncryptor.encrypt(request.getCardNumber()))
                 .cardHolder(request.getCardHolder())
                 .expiryDate(request.getExpiryDate())
                 .status(CardStatus.ACTIVE)
                 .user(user)
                 .build();
-        cardRepository.save(newCard);
-
+        Card newCard = cardRepository.save(card);
         return cardMapper.entityToUpsertResponse(newCard);
     }
 

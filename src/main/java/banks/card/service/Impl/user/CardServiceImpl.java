@@ -21,6 +21,7 @@ import banks.card.service.mapper.CardMapper;
 import banks.card.service.security.JwtService;
 import banks.card.service.specification.CardSpecification;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +50,7 @@ public class CardServiceImpl implements CardUserActionService {
     private final JwtService jwtService;
     private final CardMapper cardMapper;
 
+    @Setter
     @Autowired
     @Lazy
     private TransactionService transactionService;
@@ -113,7 +115,7 @@ public class CardServiceImpl implements CardUserActionService {
             }
 
             if (!fromCard.getStatus().equals(CardStatus.ACTIVE) || !toCard.getStatus().equals(CardStatus.ACTIVE)) {
-                String message = "Both cards must be  active";
+                String message = "Both cards must be active";
                 errorTransaction = transactionService.createAndSave(fromCard, toCard, request.getAmount(), TransferStatus.DECLINED, TransactionType.TRANSFER_OUT, message);
                 throw new TransferException(message, response);
             }
@@ -182,7 +184,8 @@ public class CardServiceImpl implements CardUserActionService {
                 throw new WithdrawalException(e.getMessage(), response);
             }
 
-            card.setBalance(card.getBalance().subtract(response.getAmount()));
+            card.setBalance(card.getBalance().subtract(request.getAmount()));
+            cardRepository.save(card);
 
             String message = "Withdrawal completed successfully";
             Transaction withdrawal =
@@ -191,6 +194,7 @@ public class CardServiceImpl implements CardUserActionService {
             response.setStatus(TransferStatus.SUCCESS);
         } catch (WithdrawalException e) {
             response.setStatus(TransferStatus.DECLINED);
+            throw e;
         } catch (EntityNotFoundException e) {
             throw e;
         } catch (Exception e) {
@@ -256,8 +260,7 @@ public class CardServiceImpl implements CardUserActionService {
      * @throws IllegalStateException если превышен один из лимитов
      */
     private void checkingLimitsOfCard(Card fromCard, BigDecimal amount)
-            throws TransferException {
-
+            throws IllegalStateException {
         if (fromCard.getBalance().compareTo(amount) < 0) {
             String message = "Insufficient balance on source card";
             throw new IllegalStateException(message);
@@ -287,7 +290,7 @@ public class CardServiceImpl implements CardUserActionService {
 
         if (fromCard.getDailyTransactionCountLimit() != null) {
             long dailyTransactionsCount = countDailyTransactions(fromCard);
-            if (dailyTransactionsCount >= fromCard.getDailyTransactionCountLimit()) {
+            if (dailyTransactionsCount >=  fromCard.getDailyTransactionCountLimit()) {
                 String message = "Daily transaction count limit exceeded";
                 throw new IllegalStateException(message);
             }
